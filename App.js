@@ -2,19 +2,22 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import options from './options.js';
 import HomePage from "./HomePage.js"
-import TVShows from "./TVShows.js"
-import Movies from "./Movies.js"
+import TVShowsOrMovies from "./TVShowsOrMovies.js"
+import Search from './Search'
+import Browse from './Browse'
 
 function App() {
+    const [languages, setLanguages] = React.useState(
+        localStorage.getItem("languages")
+    )
     React.useEffect(
         ()=>{
-            let languages = localStorage.getItem("languages")
             if(!languages){
                 fetch("https://api.themoviedb.org/3/configuration/languages", options)
                 .then(response => response.json())
                 .then(response =>{
-                    localStorage.setItem("languages", response)
-                    languages = localStorage.getItem("languages")
+                    localStorage.setItem("languages", JSON.stringify(response))
+                    setLanguages(localStorage.getItem("languages"))
                 })
                 .catch(err => console.error(err));
             }
@@ -40,12 +43,20 @@ function App() {
                         <Route path="/" element={
                             <HomePage />
                         }/>
+
                         <Route path="TVShows" element={
-                            <TVShows />
-                        }/>
+                            <TVShowsOrMovies moviesOrShows="tv" />
+                        }>
+                            <Route path="Search" element={<Search />}></Route>
+                            <Route path="Browse" element={<Browse languages={languages} />}></Route>
+                        </Route>
+
                         <Route path="Movies" element={
-                            <Movies />
-                        }/>
+                            <TVShowsOrMovies moviesOrShows="movies" />
+                        }>
+                            <Route path="Search" element={<Search />}></Route>
+                            <Route path="Browse" element={<Browse languages={languages} />}></Route>
+                        </Route>
                     </Routes>
             </div>
         </BrowserRouter>
