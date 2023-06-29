@@ -1,10 +1,17 @@
 import React from 'react';
+import { useOutletContext } from "react-router-dom";
+
 
 function Browse(props) {
-    // const languages = React.useState(JSON.parse(props.languages))[0]
+    const {filterMovies} = useOutletContext()
     const menu = React.useRef()
     const [shownLangs, setShownLangs] = React.useState([])
     const [chosenLang, setChosenLang] = React.useState()
+    React.useEffect(()=>{
+        if(chosenLang){
+            filterMovies(chosenLang.iso_639_1)
+        }
+    },[chosenLang])
     return (
         <div className='row'>
             <div className="col dropdown">
@@ -26,13 +33,15 @@ function Browse(props) {
                         type="text" 
                         placeholder="Search.." 
                         onKeyUp={(e)=>{
-                            setShownLangs(
-                                JSON.parse(props.languages).filter((langData)=>{
-                                    if(e.target.value!==""){
+                            if(e.target.value==""){
+                                setShownLangs([])
+                            }else{
+                                setShownLangs(
+                                    JSON.parse(props.languages).filter((langData)=>{
                                         return langData["english_name"].includes(e.target.value)
-                                    }
-                                })
-                            )
+                                    })
+                                )
+                            }
                         }} 
                     />
                     <div>

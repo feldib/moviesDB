@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import options from './options.js';
 import HomePage from "./HomePage.js"
 import TVShowsOrMovies from "./TVShowsOrMovies.js"
 import Search from './Search'
 import Browse from './Browse'
+import MoviePage from './MoviePage.js';
+import {fetchLanguages} from "./fetchFunctions.js"
 
 function App() {
     const [languages, setLanguages] = React.useState(
@@ -13,13 +14,7 @@ function App() {
     React.useEffect(
         ()=>{
             if(!languages){
-                fetch("https://api.themoviedb.org/3/configuration/languages", options)
-                .then(response => response.json())
-                .then(response =>{
-                    localStorage.setItem("languages", JSON.stringify(response))
-                    setLanguages(localStorage.getItem("languages"))
-                })
-                .catch(err => console.error(err));
+                fetchLanguages(setLanguages)
             }
         }, []
     )
@@ -52,11 +47,12 @@ function App() {
                         </Route>
 
                         <Route path="Movies" element={
-                            <TVShowsOrMovies moviesOrShows="movies" />
+                            <TVShowsOrMovies moviesOrShows="movie" />
                         }>
                             <Route path="Search" element={<Search />}></Route>
                             <Route path="Browse" element={<Browse languages={languages} />}></Route>
                         </Route>
+                        <Route path="details" element={<MoviePage />} />
                     </Routes>
             </div>
         </BrowserRouter>

@@ -1,41 +1,20 @@
 import React from 'react';
 import {Link, Outlet } from "react-router-dom";
 import Gallery from "./Gallery"
+import {fetchTrending, filterFetch, searchFetch} from './fetchFunctions'
 
 function TVShows(props) {
-    function filterFetch(moviesOrShows, originalLanguage="", options){
-        const moviesUrlDiscover = `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc`
-        const tvShowsURLDiscover = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc`
-        let url=""
-        if(moviesOrShows==="movies"){
-            url=moviesUrlDiscover
-        }else if(moviesOrShows==="tv"){
-            url=tvShowsURLDiscover
-        }
-        let lang = ""
-        if(originalLanguage!==""){
-            lang = `&with_original_language=${originalLanguage}`
-        }
-        fetch(`${url}${lang}`, options)
-            .then(response => response.json())
-            .then(response => console.log(response))
-            .catch(err => console.error(err));
-    }
-    function searchFilter(moviesOrShows, title, options){
-        let what=""
-        if(moviesOrShows==="movie" || moviesOrShows==="tv"){
-            what=moviesOrShows
-        }
-        fetch(`https://api.themoviedb.org/3/search/${what}?query=${title}&include_adult=false&language=en-US&page=1`, options)
-        .then(response => response.json())
-            .then(response => console.log(response))
-            .catch(err => console.error(err));
-    }
-
+    const [currentmovieArray, setCurrentmovieArray] = React.useState([])
+    const [context, setContext] = React.useState()
+    React.useEffect(()=>{
+        (async()=>{
+            setCurrentmovieArray(await fetchTrending(props.moviesOrShows))
+        })()
+    },[])
     let pageTitle=""
     if(props.moviesOrShows==="tv"){
         pageTitle="TV Shows"
-    }else if(props.moviesOrShows==="movies"){
+    }else if(props.moviesOrShows==="movie"){
         pageTitle="Movies"
     }
     return (
@@ -43,16 +22,41 @@ function TVShows(props) {
             <div className='row text-center mt-5'>
                 <h1>{pageTitle}</h1>
                 <div className='row navbar'>
-                    <Link className='col nav-link' to="Search">
+                    <Link 
+                        className='col nav-link' 
+                        to="Search"
+                        onClick={()=>{
+                            setContext({
+                                search: async(query)=>{
+                                    setCurrentmovieArray(
+                                            await searchFetch(props.moviesOrShows, query)
+                                        )
+                                }
+                            })
+                        }}                                             
+                    >
                         Search
                     </Link>
-                    <Link className='col nav-link' to="Browse">
+                    <Link 
+                        className='col nav-link' 
+                        to="Browse"
+                        onClick={()=>{
+                            setContext({
+                                filterMovies: async(originalLanguage)=>{
+                                    setCurrentmovieArray(
+                                            await filterFetch(props.moviesOrShows, originalLanguage)
+                                        )
+                                },
+                                resetToTrending: async()={}
+                            })
+                        }}  
+                    >
                         Browse
                     </Link>
                 </div>
             </div>
-            <Outlet />
-            <Gallery />
+            <Outlet context={context}/>
+            <Gallery movieArray={currentmovieArray}/>
         </div>
     )
 }
