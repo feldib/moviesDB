@@ -4,7 +4,6 @@ import { useOutletContext } from "react-router-dom";
 
 function Browse(props) {
     const [filterMovies, resetToTrending] = useOutletContext()
-    const menu = React.useRef()
     const [shownLangs, setShownLangs] = React.useState([])
     const [chosenLang, setChosenLang] = React.useState()
     React.useEffect(()=>{
@@ -12,6 +11,7 @@ function Browse(props) {
             filterMovies(chosenLang.iso_639_1)
         }
     },[chosenLang])
+    const menu = React.useRef()
     return (
         <div className='row'>
             <div className="col dropdown">

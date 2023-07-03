@@ -6,16 +6,21 @@ function MoviePage() {
     const location = useLocation()
     const {movie, moviesOrShows} = location.state
     let path = ""
+    let nameOrTitle = ""
+    let airOrRelease = ""
     if(moviesOrShows==="tv"){
         path="TVShows"
+        nameOrTitle="name"
+        airOrRelease="first_air_date"
     }else if(moviesOrShows==="movie"){
         path="Movies"
+        nameOrTitle="title"
+        airOrRelease="release_date"
     }
     const [picturesSrcS, setPicturesSrcS] = React.useState([])
-    const {id, title, poster_path, overview, release_date} = movie
     React.useEffect(()=>{
         (async ()=>{
-            const srcS = await fetchPictures(id)
+            const srcS = await fetchPictures(movie.id)
             setPicturesSrcS(srcS)
         })()
         },[]
@@ -23,27 +28,28 @@ function MoviePage() {
     return (
         <div className='row'>
             <div className='row'>
-                <h1 className=''>{title}</h1>
+                <h1 className=''>{movie[nameOrTitle]}</h1>
             </div>
             <div className='row'>
                 <div className='col'>
                     <div className='row'>
                         <img 
-                            src={`https://www.themoviedb.org/t/p/w440_and_h660_face/${poster_path}`} 
+                            src={`https://www.themoviedb.org/t/p/w440_and_h660_face/${movie.poster_path}`} 
                             style={{
                                 width: "200px"
                             }}
                         />
                     </div>
                     <h3 className='row'>
-                        {release_date}
+                        {movie[airOrRelease]}
                     </h3>
                 </div>
                 <div className='col'>
                     <h2 className='row'>Description</h2>
-                    <p className='row'>{overview}</p>
+                    <p className='row'>{movie.overview}</p>
                 </div>
             </div>
+
             <div className='row'>
                 <Link to={`../${path}`}>
                     <button className='btn btn-secondary'>
@@ -51,6 +57,7 @@ function MoviePage() {
                     </button>
                 </Link>
             </div>
+            
             <div className='row d-flex d-wrap'>
                 {picturesSrcS.map((imgSrc)=>{
                     return (

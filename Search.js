@@ -11,7 +11,7 @@ function Search() {
                 <div className='input-group-append'>
                     <button 
                         type='button' 
-                        className='btn btn-outline-secondary'
+                        className='btn btn-outline-secondary bg-secondary'
                         onClick={()=>{
                             if(input.current.value!==""){
                                 search(input.current.value)

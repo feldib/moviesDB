@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link, Outlet } from "react-router-dom";
-import Gallery from "./Gallery"
+import MovieCard from './MovieCard'
 import {fetchTrending, filterFetch, searchFetch} from './fetchFunctions'
 
 function TVShows(props) {
@@ -30,7 +30,7 @@ function TVShows(props) {
     return (
         <div className="row">
             <div className='row text-center mt-5'>
-                <h1>{pageTitle}</h1>
+                <h1 className='display-1'>{pageTitle}</h1>
                 <div className='row navbar'>
                     <Link 
                         className='col nav-link' 
@@ -45,7 +45,9 @@ function TVShows(props) {
                             })
                         }}                                             
                     >
-                        Search
+                        <h3 className='display-4'>
+                            Search
+                        </h3>
                     </Link>
                     <Link 
                         className='col nav-link' 
@@ -54,12 +56,18 @@ function TVShows(props) {
                             setContext([filterMovies, resetToTrending])
                         }}
                     >
-                        Browse
+                        <h3 className='display-4'>
+                            Browse
+                        </h3>
                     </Link>
                 </div>
             </div>
             <Outlet context={context}/>
-            <Gallery movieArray={currentmovieArray} moviesOrShows={props.moviesOrShows} />
+            <div className='d-flex flex-wrap'>
+            {currentmovieArray.map((movieData)=>{
+                return <MovieCard movieData={movieData} moviesOrShows={props.moviesOrShows} />
+            })}
+        </div>
         </div>
     )
 }

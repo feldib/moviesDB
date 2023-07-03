@@ -38,7 +38,7 @@ function App() {
                         <Route path="/" element={
                             <HomePage />
                         }/>
-
+                        
                         <Route path="TVShows" element={
                             <TVShowsOrMovies moviesOrShows="tv" />
                         }>
