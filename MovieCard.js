@@ -1,13 +1,13 @@
 import React from 'react';
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
-export default function MovieCard(movieData){
+export default function MovieCard(movieData, moviesOrShows){
     return (
       <Link to={`../details`} 
         state={{
-          from: useLocation().pathname,
-          movie: movieData
+          movie: movieData,
+          moviesOrShows: moviesOrShows
         }}
       >
         <div 

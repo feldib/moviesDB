@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router-dom";
 
 
 function Browse(props) {
-    const {filterMovies} = useOutletContext()
+    const [filterMovies, resetToTrending] = useOutletContext()
     const menu = React.useRef()
     const [shownLangs, setShownLangs] = React.useState([])
     const [chosenLang, setChosenLang] = React.useState()
@@ -64,6 +64,7 @@ function Browse(props) {
                     className="btn btn-danger"
                     onClick={()=>{
                         setChosenLang()
+                        resetToTrending()
                     }}
                 >
                     Any language

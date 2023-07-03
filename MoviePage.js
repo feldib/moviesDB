@@ -4,11 +4,18 @@ import { fetchPictures } from './fetchFunctions'
 
 function MoviePage() {
     const location = useLocation()
-    const {from, movie} = location.state
+    const {movie, moviesOrShows} = location.state
+    let path = ""
+    if(moviesOrShows==="tv"){
+        path="TVShows"
+    }else if(moviesOrShows==="movie"){
+        path="Movies"
+    }
     const [picturesSrcS, setPicturesSrcS] = React.useState([])
+    const {id, title, poster_path, overview, release_date} = movie
     React.useEffect(()=>{
         (async ()=>{
-            const srcS = await fetchPictures(movie.id)
+            const srcS = await fetchPictures(id)
             setPicturesSrcS(srcS)
         })()
         },[]
@@ -16,29 +23,29 @@ function MoviePage() {
     return (
         <div className='row'>
             <div className='row'>
-                <h1 className=''>{movie.title}</h1>
+                <h1 className=''>{title}</h1>
             </div>
             <div className='row'>
                 <div className='col'>
                     <div className='row'>
                         <img 
-                            src={`https://www.themoviedb.org/t/p/w440_and_h660_face/${movie.poster_path}`} 
+                            src={`https://www.themoviedb.org/t/p/w440_and_h660_face/${poster_path}`} 
                             style={{
                                 width: "200px"
                             }}
                         />
                     </div>
                     <h3 className='row'>
-                        {movie["release_date"]}
+                        {release_date}
                     </h3>
                 </div>
                 <div className='col'>
                     <h2 className='row'>Description</h2>
-                    <p className='row'>{movie["overview"]}</p>
+                    <p className='row'>{overview}</p>
                 </div>
             </div>
             <div className='row'>
-                <Link to={`${from}`}>
+                <Link to={`../${path}`}>
                     <button className='btn btn-secondary'>
                         Back to Browsing
                     </button>

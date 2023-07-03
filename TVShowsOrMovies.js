@@ -6,16 +6,26 @@ import {fetchTrending, filterFetch, searchFetch} from './fetchFunctions'
 function TVShows(props) {
     const [currentmovieArray, setCurrentmovieArray] = React.useState([])
     const [context, setContext] = React.useState()
+    const [pageTitle, setPageTitle] = React.useState("")
     React.useEffect(()=>{
         (async()=>{
+            if(props.moviesOrShows==="tv"){
+                setPageTitle("TV Shows")
+            }else if(props.moviesOrShows==="movie"){
+                setPageTitle("Movies")
+            }
             setCurrentmovieArray(await fetchTrending(props.moviesOrShows))
         })()
-    },[])
-    let pageTitle=""
-    if(props.moviesOrShows==="tv"){
-        pageTitle="TV Shows"
-    }else if(props.moviesOrShows==="movie"){
-        pageTitle="Movies"
+    },[props.moviesOrShows])
+    const filterMovies = async(originalLanguage)=>{
+        setCurrentmovieArray(
+                await filterFetch(props.moviesOrShows, originalLanguage)
+            )
+    }
+    const resetToTrending = async()=>{
+        setCurrentmovieArray(
+                await fetchTrending(props.moviesOrShows)
+        )
     }
     return (
         <div className="row">
@@ -41,22 +51,15 @@ function TVShows(props) {
                         className='col nav-link' 
                         to="Browse"
                         onClick={()=>{
-                            setContext({
-                                filterMovies: async(originalLanguage)=>{
-                                    setCurrentmovieArray(
-                                            await filterFetch(props.moviesOrShows, originalLanguage)
-                                        )
-                                },
-                                resetToTrending: async()={}
-                            })
-                        }}  
+                            setContext([filterMovies, resetToTrending])
+                        }}
                     >
                         Browse
                     </Link>
                 </div>
             </div>
             <Outlet context={context}/>
-            <Gallery movieArray={currentmovieArray}/>
+            <Gallery movieArray={currentmovieArray} moviesOrShows={props.moviesOrShows} />
         </div>
     )
 }
