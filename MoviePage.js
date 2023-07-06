@@ -1,30 +1,47 @@
 import React from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { fetchPictures } from './fetchFunctions'
+import { fetchPictures, fetchDetails } from './fetchFunctions'
+import {base_photo_url} from "./options"
 
 function MoviePage() {
-    const location = useLocation()
-    const {movie, moviesOrShows} = location.state
-    let path = ""
-    let nameOrTitle = ""
-    let airOrRelease = ""
-    if(moviesOrShows==="tv"){
-        path="TVShows"
-        nameOrTitle="name"
-        airOrRelease="first_air_date"
-    }else if(moviesOrShows==="movie"){
-        path="Movies"
-        nameOrTitle="title"
-        airOrRelease="release_date"
-    }
+    const location = useLocation() 
+    const pathList = location.pathname.split("/")
+    const id = pathList[pathList.length-1]
+    const [movie, setMovie] = React.useState("")
     const [picturesSrcS, setPicturesSrcS] = React.useState([])
+    const [nameOrTitle, setNameOrTitle] = React.useState("")
+    const [airOrRelease, setAirOrRelease] = React.useState("")
+    let moviesOrShowsPath = pathList[1]
+    let movieOrTVShows = ""
+
+    async function setUpData(id, movieOrTVShows){
+        setMovie(await fetchDetails(id, movieOrTVShows))
+        let showSrcS = await fetchPictures(id, movieOrTVShows)
+        setPicturesSrcS(showSrcS)
+    }
+
     React.useEffect(()=>{
-        (async ()=>{
-            const srcS = await fetchPictures(movie.id)
-            setPicturesSrcS(srcS)
+        (async()=>{
+            switch(moviesOrShowsPath){
+                case("TVShows"):
+                    movieOrTVShows = "tv"
+                    setNameOrTitle("name")
+                    setAirOrRelease("first_air_date")
+                    await setUpData(id, movieOrTVShows)
+                    break;
+                case("Movies"):
+                    movieOrTVShows = "movie"
+                    setNameOrTitle("title")
+                    setAirOrRelease("release_date")
+                    await setUpData(id, movieOrTVShows)
+                    break;
+            }
+            console.log(movie)
+            console.log(nameOrTitle)
+            console.log(movie[nameOrTitle])
         })()
-        },[]
-    )
+    },[])
+    
     return (
         <div className='row'>
             <div className='row'>
@@ -34,7 +51,7 @@ function MoviePage() {
                 <div className='col'>
                     <div className='row'>
                         <img 
-                            src={`https://www.themoviedb.org/t/p/w440_and_h660_face/${movie.poster_path}`} 
+                            src={`${base_photo_url}/w440_and_h660_face/${movie.poster_path}`} 
                             style={{
                                 width: "200px"
                             }}
@@ -45,13 +62,12 @@ function MoviePage() {
                     </h3>
                 </div>
                 <div className='col'>
-                    <h2 className='row'>Description</h2>
                     <p className='row'>{movie.overview}</p>
                 </div>
             </div>
 
             <div className='row'>
-                <Link to={`../${path}`}>
+                <Link to={`/${moviesOrShowsPath}`}>
                     <button className='btn btn-secondary'>
                         Back to Browsing
                     </button>

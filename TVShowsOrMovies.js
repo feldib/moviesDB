@@ -14,7 +14,11 @@ function TVShows(props) {
             }else if(props.moviesOrShows==="movie"){
                 setPageTitle("Movies")
             }
-            setCurrentmovieArray(await fetchTrending(props.moviesOrShows))
+            setCurrentmovieArray(
+                await fetchTrending(
+                    props.moviesOrShows
+                    )
+            )
         })()
     },[props.moviesOrShows])
     const filterMovies = async(originalLanguage)=>{
@@ -64,12 +68,18 @@ function TVShows(props) {
             </div>
             <Outlet context={context}/>
             <div className='d-flex flex-wrap'>
-            {currentmovieArray.map((movieData)=>{
-                return <MovieCard movieData={movieData} moviesOrShows={props.moviesOrShows} />
-            })}
+            {currentmovieArray.map(
+                (movieData)=>{
+                return (
+                    <MovieCard 
+                        movieData={movieData} 
+                        moviesOrShows={props.moviesOrShows}
+                    />
+                )
+                }
+            )}
         </div>
-        </div>
-    )
+    </div>)
 }
 
 export default TVShows;
