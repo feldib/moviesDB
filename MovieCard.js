@@ -1,24 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from "react-router-dom";
 import {base_photo_url} from "./options"
+import {init_nameOrTitle_airOrRelease} from "./functions"
 
 export default function MovieCard(props){
-    let nameOrTitle = ""
-    let airOrRelease = ""
     const location = useLocation()
     const pathList = location.pathname.split("/")
     const movieOrShowPath = pathList[1]
-
-    switch(props.moviesOrShows){
-      case("tv"):
-        nameOrTitle="name"
-        airOrRelease="first_air_date"
-        break;
-      case("movie"):
-        nameOrTitle="title"
-        airOrRelease="release_date"
-        break;
-    }
+    const [nameOrTitle, airOrRelease] = init_nameOrTitle_airOrRelease(props.moviesOrShows)
     return (
       <Link
         key={props.movieData.id}

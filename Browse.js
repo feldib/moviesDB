@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOutletContext } from "react-router-dom";
-import {fetchLanguages} from "./fetchFunctions.js"
+import {fetchLanguages} from "./fetchFunctions"
+import {getFilteredLangs} from "./functions"
 
 function Browse(props) {
     const [filterMovies, resetToTrending] = useOutletContext()
@@ -24,20 +25,6 @@ function Browse(props) {
         }
     },[chosenLang])
     const menu = React.useRef()
-    const getFilteredLangs = (value)=>{
-        const rawLangList = JSON.parse(languages).filter(
-            (langData)=>{
-                return (
-                    langData["english_name"]
-                    .toLowerCase()
-                    .includes(
-                        value.toLowerCase()
-                    )
-                )
-            }
-        )
-        return rawLangList
-    }
     return (
         <div className='row'>
             <div className="col dropdown">
@@ -64,7 +51,7 @@ function Browse(props) {
                                 setShownLangs([])
                             }else{
                                 setShownLangs(
-                                    getFilteredLangs(e.target.value)
+                                    getFilteredLangs(e.target.value, languages)
                                 )
                             }
                         }} 
