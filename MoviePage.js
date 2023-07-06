@@ -59,6 +59,7 @@ function MoviePage() {
                                 style={{
                                     width: "200px"
                                 }}
+                                alt={`Thumbnail of ${movie[nameOrTitle]}`}
                             />
                         </div>
                         <h3 className='row'>
@@ -82,10 +83,13 @@ function MoviePage() {
             
             {picturesLoading ? <Loader /> :
                 <div className='row d-flex d-wrap'>
-                    {picturesSrcS.map((imgSrc)=>{
+                    {picturesSrcS.map((imgSrc, index)=>{
                         return (
                             <div className='card my-2 mx-1 p-1' style={{width: "150px"}}>
-                                <img src={`https://image.tmdb.org/t/p/w440_and_h660_face/${imgSrc}`} />
+                                <img 
+                                    src={`https://image.tmdb.org/t/p/w440_and_h660_face/${imgSrc}` }
+                                    alt={`${index}. picture from movie`}
+                                />
                             </div>
                         )
                     })}

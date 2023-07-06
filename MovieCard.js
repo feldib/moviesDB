@@ -17,7 +17,11 @@ export default function MovieCard(props){
             className='card my-2 mx-1 p-1 text-center'
             style={{width: "10rem"}}
         >
-            <img className='card-img-top' src={`${base_photo_url}/w440_and_h660_face/${props.movieData.poster_path}`}/>
+            <img 
+              className='card-img-top' 
+              src={`${base_photo_url}/w440_and_h660_face/${props.movieData.poster_path}`}
+              alt={`${props.movieData[nameOrTitle]} clickable thumbnail`}
+            />
             <h5>{props.movieData[nameOrTitle]}</h5>
             <p>{props.movieData[airOrRelease]}</p>
         </div>
