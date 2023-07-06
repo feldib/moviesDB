@@ -1,14 +1,17 @@
 import React from 'react';
 import {Link, Outlet } from "react-router-dom";
 import MovieCard from './MovieCard'
+import Loader from './Loader';
 import {fetchTrending, filterFetch, searchFetch} from './fetchFunctions'
 
 function TVShows(props) {
     const [currentmovieArray, setCurrentmovieArray] = React.useState([])
     const [context, setContext] = React.useState()
     const [pageTitle, setPageTitle] = React.useState("")
+    const [loading, setLoading] = React.useState(true)
     React.useEffect(()=>{
         (async()=>{
+            setLoading(true)
             if(props.moviesOrShows==="tv"){
                 setPageTitle("TV Shows")
             }else if(props.moviesOrShows==="movie"){
@@ -19,17 +22,22 @@ function TVShows(props) {
                     props.moviesOrShows
                     )
             )
+            setLoading(false)
         })()
     },[props.moviesOrShows])
     const filterMovies = async(originalLanguage)=>{
+        setLoading(true)
         setCurrentmovieArray(
                 await filterFetch(props.moviesOrShows, originalLanguage)
             )
+        setLoading(false)
     }
     const resetToTrending = async()=>{
+        setLoading(true)
         setCurrentmovieArray(
                 await fetchTrending(props.moviesOrShows)
         )
+        setLoading(false)
     }
     return (
         <div className="row">
@@ -42,9 +50,11 @@ function TVShows(props) {
                         onClick={()=>{
                             setContext({
                                 search: async(query)=>{
+                                    setLoading(true)
                                     setCurrentmovieArray(
                                             await searchFetch(props.moviesOrShows, query)
                                         )
+                                    setLoading(false)
                                 }
                             })
                         }}                                             
@@ -67,18 +77,20 @@ function TVShows(props) {
                 </div>
             </div>
             <Outlet context={context}/>
-            <div className='d-flex flex-wrap'>
-            {currentmovieArray.map(
-                (movieData)=>{
-                return (
-                    <MovieCard 
-                        movieData={movieData} 
-                        moviesOrShows={props.moviesOrShows}
-                    />
-                )
-                }
-            )}
-        </div>
+            {loading ? <Loader /> :
+                <div className='d-flex flex-wrap'>
+                    {currentmovieArray.map(
+                        (movieData)=>{
+                        return (
+                            <MovieCard 
+                                movieData={movieData} 
+                                moviesOrShows={props.moviesOrShows}
+                            />
+                        )
+                        }
+                    )}
+                </div>
+            }
     </div>)
 }
 
