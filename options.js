@@ -6,4 +6,8 @@ const options = {
     }
 }
 
-export default options
+const base_url = 'https://api.themoviedb.org/3/'
+
+const base_photo_url = `https://www.themoviedb.org/t/p`
+
+export {options as default, base_url, base_photo_url}

@@ -1,56 +1,79 @@
 import React from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { fetchPictures } from './fetchFunctions'
+import { fetchPictures, fetchDetails } from './fetchFunctions'
+import {base_photo_url} from "./options"
 
 function MoviePage() {
-    const location = useLocation()
-    const {movie, moviesOrShows} = location.state
-    let path = ""
-    if(moviesOrShows==="tv"){
-        path="TVShows"
-    }else if(moviesOrShows==="movie"){
-        path="Movies"
-    }
+    const location = useLocation() 
+    const pathList = location.pathname.split("/")
+    const id = pathList[pathList.length-1]
+    const [movie, setMovie] = React.useState("")
     const [picturesSrcS, setPicturesSrcS] = React.useState([])
-    const {id, title, poster_path, overview, release_date} = movie
+    const [nameOrTitle, setNameOrTitle] = React.useState("")
+    const [airOrRelease, setAirOrRelease] = React.useState("")
+    let moviesOrShowsPath = pathList[1]
+    let movieOrTVShows = ""
+
+    async function setUpData(id, movieOrTVShows){
+        setMovie(await fetchDetails(id, movieOrTVShows))
+        let showSrcS = await fetchPictures(id, movieOrTVShows)
+        setPicturesSrcS(showSrcS)
+    }
+
     React.useEffect(()=>{
-        (async ()=>{
-            const srcS = await fetchPictures(id)
-            setPicturesSrcS(srcS)
+        (async()=>{
+            switch(moviesOrShowsPath){
+                case("TVShows"):
+                    movieOrTVShows = "tv"
+                    setNameOrTitle("name")
+                    setAirOrRelease("first_air_date")
+                    await setUpData(id, movieOrTVShows)
+                    break;
+                case("Movies"):
+                    movieOrTVShows = "movie"
+                    setNameOrTitle("title")
+                    setAirOrRelease("release_date")
+                    await setUpData(id, movieOrTVShows)
+                    break;
+            }
+            console.log(movie)
+            console.log(nameOrTitle)
+            console.log(movie[nameOrTitle])
         })()
-        },[]
-    )
+    },[])
+    
     return (
         <div className='row'>
             <div className='row'>
-                <h1 className=''>{title}</h1>
+                <h1 className=''>{movie[nameOrTitle]}</h1>
             </div>
             <div className='row'>
                 <div className='col'>
                     <div className='row'>
                         <img 
-                            src={`https://www.themoviedb.org/t/p/w440_and_h660_face/${poster_path}`} 
+                            src={`${base_photo_url}/w440_and_h660_face/${movie.poster_path}`} 
                             style={{
                                 width: "200px"
                             }}
                         />
                     </div>
                     <h3 className='row'>
-                        {release_date}
+                        {movie[airOrRelease]}
                     </h3>
                 </div>
                 <div className='col'>
-                    <h2 className='row'>Description</h2>
-                    <p className='row'>{overview}</p>
+                    <p className='row'>{movie.overview}</p>
                 </div>
             </div>
+
             <div className='row'>
-                <Link to={`../${path}`}>
+                <Link to={`/${moviesOrShowsPath}`}>
                     <button className='btn btn-secondary'>
                         Back to Browsing
                     </button>
                 </Link>
             </div>
+            
             <div className='row d-flex d-wrap'>
                 {picturesSrcS.map((imgSrc)=>{
                     return (

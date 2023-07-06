@@ -1,22 +1,36 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import {base_photo_url} from "./options"
 
+export default function MovieCard(props){
+    let nameOrTitle = ""
+    let airOrRelease = ""
+    const location = useLocation()
+    const pathList = location.pathname.split("/")
+    const movieOrShowPath = pathList[1]
 
-export default function MovieCard(movieData, moviesOrShows){
+    switch(props.moviesOrShows){
+      case("tv"):
+        nameOrTitle="name"
+        airOrRelease="first_air_date"
+        break;
+      case("movie"):
+        nameOrTitle="title"
+        airOrRelease="release_date"
+        break;
+    }
     return (
-      <Link to={`../details`} 
-        state={{
-          movie: movieData,
-          moviesOrShows: moviesOrShows
-        }}
+      <Link
+        key={props.movieData.id}
+        to={`../${movieOrShowPath}/${props.movieData.id}`}
       >
         <div 
             className='card my-2 mx-1 p-1 text-center'
             style={{width: "10rem"}}
         >
-            <img className='card-img-top' src={`https://www.themoviedb.org/t/p/w440_and_h660_face/${movieData.poster_path}`}/>
-            <h5>{movieData.name}</h5>
-            <p>{movieData.first_air_date}</p>
+            <img className='card-img-top' src={`${base_photo_url}/w440_and_h660_face/${props.movieData.poster_path}`}/>
+            <h5>{props.movieData[nameOrTitle]}</h5>
+            <p>{props.movieData[airOrRelease]}</p>
         </div>
       </Link>
     )

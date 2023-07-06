@@ -5,19 +5,8 @@ import TVShowsOrMovies from "./TVShowsOrMovies.js"
 import Search from './Search'
 import Browse from './Browse'
 import MoviePage from './MoviePage.js';
-import {fetchLanguages} from "./fetchFunctions.js"
 
 function App() {
-    const [languages, setLanguages] = React.useState(
-        localStorage.getItem("languages")
-    )
-    React.useEffect(
-        ()=>{
-            if(!languages){
-                fetchLanguages(setLanguages)
-            }
-        }, []
-    )
     return (
         <BrowserRouter>
             <div className='container'>
@@ -38,21 +27,22 @@ function App() {
                         <Route path="/" element={
                             <HomePage />
                         }/>
-
+                        
                         <Route path="TVShows" element={
                             <TVShowsOrMovies moviesOrShows="tv" />
                         }>
                             <Route path="Search" element={<Search />}></Route>
-                            <Route path="Browse" element={<Browse languages={languages} />}></Route>
+                            <Route path="Browse" element={<Browse />}></Route>
                         </Route>
+                        <Route path="TVShows/*" element={<MoviePage />} />
 
                         <Route path="Movies" element={
                             <TVShowsOrMovies moviesOrShows="movie" />
                         }>
                             <Route path="Search" element={<Search />}></Route>
-                            <Route path="Browse" element={<Browse languages={languages} />}></Route>
+                            <Route path="Browse" element={<Browse />}></Route>
                         </Route>
-                        <Route path="details" element={<MoviePage />} />
+                        <Route path="Movies/*" element={<MoviePage />} />
                     </Routes>
             </div>
         </BrowserRouter>
